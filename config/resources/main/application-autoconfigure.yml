@@ -1,0 +1,7 @@
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration # spring-cloud-commons
+#      - org.springframework.cloud.loadbalancer.config.LoadBalancerAutoConfiguration # spring-cloud-starter-loadbalancer
+#      - org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration

@@ -1,0 +1,31 @@
+//
+
+dependencies {
+
+    // servlet
+    // api "javax.servlet:javax.servlet-api"
+    api "jakarta.servlet:jakarta.servlet-api"
+
+    api "org.junit.jupiter:junit-jupiter"
+
+    runtimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    api auto("spring-boot-starter-${LOGGER}")
+
+    api "org.springframework.boot:spring-boot-starter-test"
+
+    api "org.springframework.boot:spring-boot-starter-web"
+
+    api("org.springframework.boot:spring-boot-starter-json")
+
+    api("org.springframework.boot:spring-boot-starter-undertow")
+
+
+    api("com.aventstack:extentreports") {
+        exclude group: 'org.mongodb', module: 'mongodb-driver-core'
+        exclude group: 'org.mongodb', module: 'mongodb-driver'
+    }
+
+    api "org.fusesource.jansi:jansi"
+
+}

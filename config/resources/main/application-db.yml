@@ -1,0 +1,76 @@
+#====================================mysql config===============================================
+spring:
+  datasource:
+    name: #project.name.underline#
+    table-prefix: ff_
+    dynamic:
+      mysql-master:
+        type: mysql
+        host: #spring.datasource.master.host#
+        port: #spring.datasource.master.port#
+        username: #spring.datasource.master.username#
+        password: #spring.datasource.master.password#
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://${spring.datasource.dynamic.mysql-master.host}:${spring.datasource.dynamic.mysql-master.port}/${spring.datasource.name}?useUnicode=yes&characterEncoding=UTF8&serverTimezone=UTC&useLegacyDatetimeCode=false&useAffectedRows=true&allowMultiQueries=true&autoReconnect=true&zeroDateTimeBehavior=CONVERT_TO_NULL
+        init-sqls:
+          #- SET GLOBAL FOREIGN_KEY_CHECKS = 0;
+          #- SET GLOBAL SQL_MODE='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+          #- SET GLOBAL MAX_ALLOWED_PACKET=1024*1024*16;
+          #- SET GLOBAL MAX_CONNECTIONS=10240;
+          #- SET GLOBAL WAIT_TIMEOUT=300;
+          #- SET GLOBAL INTERACTIVE_TIMEOUT=500;
+          #- SET GLOBAL EXPIRE_LOGS_DAYS=7;
+          #- SET GLOBAL TIME_ZONE = '+00:00';
+          #- SET GLOBAL SLOW_QUERY_LOG=ON;
+          #- SET GLOBAL SLOW_LAUNCH_TIME=3;
+          #- SET GLOBAL TIDB_ENABLE_NOOP_FUNCTIONS = ON
+          - CREATE DATABASE IF NOT EXISTS ${spring.datasource.name} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    druid:
+#      initialSize: 10
+      maxActive: 1000
+#      minIdle: 20
+#      maxWait: 10000
+#      timeBetweenEvictionRunsMillis: 60000
+#      minEvictableIdleTimeMillis: 30000
+#      maxEvictableIdleTimeMillis: 180000
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+#      poolPreparedStatements: true
+#      maxPoolPreparedStatementPerConnectionSize: 20
+      useGlobalDataSourceStat: true
+#      keepAlive: true
+#      removeAbandoned: false
+#      removeAbandonedTimeoutMillis: 300000
+#      logAbandoned: true
+      validationQuery: SELECT 1
+
+  transaction:
+    rollback-on-commit-failure: true
+  liquibase:
+    enabled: false
+  flyway:
+    enabled: false
+  sql:
+    init:
+      mode: never
+
+---
+#====================================mybatis config===============================================
+mybatis-plus:
+  mapper-locations:
+    - classpath*:/mybatis/mapper/*.xml
+    - classpath*:/META-INF/mybatis/mapper/*.xml
+    - classpath*:/META-INF/resources/mybatis/mapper/*.xml
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+
+mybatis-flex:
+  mapper-locations:
+    - classpath*:/mybatis/mapper/*.xml
+    - classpath*:/META-INF/mybatis/mapper/*.xml
+    - classpath*:/META-INF/resources/mybatis/mapper/*.xml
+  global-config:
+    print-banner: false

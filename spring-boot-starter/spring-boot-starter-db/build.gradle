@@ -1,0 +1,32 @@
+//
+
+
+dependencies {
+    // servlet
+//    compileOnly "javax.servlet:javax.servlet-api"
+    compileOnly "jakarta.servlet:jakarta.servlet-api"
+
+    testApi auto("spring-boot-starter-test")
+
+    api auto("spring-boot-starter-common")
+    api auto("spring-boot-starter-crypto")
+
+    api "org.springframework:spring-jdbc"
+
+    api "com.alibaba:druid"
+    api "com.alibaba:fastjson"
+
+    api "org.mybatis:mybatis"
+    api "org.mybatis:mybatis-spring"
+    // api "org.mybatis.spring.native:mybatis-spring-native-core"
+    api "com.mybatis-flex:mybatis-flex-spring-boot-starter"
+
+    api "com.github.jsqlparser:jsqlparser"
+
+    //mysql-connector
+    api "mysql:mysql-connector-java"
+
+    //pg-connector
+    api "org.postgresql:postgresql"
+
+}

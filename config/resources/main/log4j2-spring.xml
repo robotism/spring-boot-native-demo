@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="30" packages="com.gankcode.springboot.log4j" >
+
+    <Properties>
+        <Property name="logDir">${sys:workdir.log}</Property>
+    </Properties>
+
+    <Appenders>
+
+        <SpringProfile name="test | debug | default">
+            <Console name="Console" target="SYSTEM_OUT">
+                <!--PatternLayout :输出日志的格式,LOG4J2定义了输出代码, 包含了日志颜色-->
+                <PatternLayout  pattern="%style{%d{ISO8601}}{bright,yellow} %highlight{%-5level} %style{[%t]}{bold,magenta} %style{(%C{1.}:%L)}{cyan} -->* %msg%n%style{%throwable}{red}"/>
+            </Console>
+        </SpringProfile>
+        <SpringProfile name="preview | release | production">
+            <!--console :控制台输出的配置-->
+            <Console name="Console" target="SYSTEM_OUT">
+                <!--PatternLayout :输出日志的格式,LOG4J2定义了输出代码, 包含了日志颜色-->
+                <PatternLayout pattern="%d{ISO8601} | %-5level | [%t][%CIP/%TID] (%C{1.}:%L) -->* %msg%n %throwable"/>
+            </Console>
+        </SpringProfile>
+
+        <!-- 文件会打印出所有信息，这个log每次运行程序会自动清空，由append属性决定，这个也挺有用的，适合临时测试用 -->
+         <File name="log" fileName="${logDir}/std.log" append="false">
+             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+         </File>
+
+        <!-- 这个会打印出所有的info及以下级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+        <RollingFile name="RollingFileInfo" fileName="${logDir}/info.log"
+                     filePattern="${logDir}/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p][%CIP/%TID] - %l - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="RollingFileWarn" fileName="${logDir}/warn.log"
+                     filePattern="${logDir}/$${date:yyyy-MM}/warn-%d{yyyy-MM-dd}-%i.log">
+            <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p][%CIP/%TID] - %l - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <!-- DefaultRolloverStrategy属性如不设置，则默认为最多同一文件夹下7个文件，这里设置了20 -->
+            <DefaultRolloverStrategy max="20"/>
+        </RollingFile>
+        <RollingFile name="RollingFileError" fileName="${logDir}/error.log"
+                     filePattern="${logDir}/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log">
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p][%CIP/%TID] - %l - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingFile>
+
+        <Async name="AsyncFile" bufferSize="262144">
+            <AppenderRef ref="RollingFileInfo"/>
+            <AppenderRef ref="RollingFileWarn"/>
+            <AppenderRef ref="RollingFileError"/>
+            <LinkedTransferQueue/>
+        </Async>
+
+    </Appenders>
+
+    <Loggers>
+        <!--AsyncLogger :异步日志,LOG4J有三种日志模式,全异步日志,混合模式,同步日志,性能从高到底,线程越多效率越高,也可以避免日志卡死线程情况发生-->
+        <!--additivity="false" : additivity设置事件是否在root logger输出, 为了避免重复输出, 可以在Logger 标签下设置additivity为”false”-->
+
+        <AsyncLogger name="org.springframework" level="WARN"/>
+        <AsyncLogger name="org.hibernate" level="WARN"/>
+        <AsyncLogger name="org.mybatis" level="WARN"/>
+
+        <AsyncLogger name="com.gankcode" level="DEBUG"/>
+
+        <!-- Root节点用来指定项目的根日志, 如果没有单独指定Logger, 那么就会默认使用该Root日志输出 -->
+        <AsyncRoot level="INFO" includeLocation="true">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AsyncFile"/>
+        </AsyncRoot>
+
+    </Loggers>
+
+</Configuration>

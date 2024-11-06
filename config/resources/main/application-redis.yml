@@ -1,0 +1,18 @@
+#
+
+spring:
+  cache:
+    type: redis
+    redis:
+      use-key-prefix: true
+      key-prefix: ${spring.application.id}
+#  session:
+#    store-type: redis
+  data:
+    redis:
+      repositories:
+        enabled: false
+      host: #spring.redis.host#
+      port: #spring.redis.port#
+      password: #spring.redis.password#
+      database: 15

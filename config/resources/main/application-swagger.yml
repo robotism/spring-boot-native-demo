@@ -1,0 +1,13 @@
+#====================================spring doc config===============================================
+springdoc:
+  api-docs:
+    servers:
+      schema:
+    groups:
+      enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    groups-order: DESC
+  writerWithDefaultPrettyPrinter: true
+  show-actuator: #spring.cloud.discovery.disabled#

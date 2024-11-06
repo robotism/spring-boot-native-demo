@@ -1,0 +1,30 @@
+
+--add-exports=java.base/java.lang=ALL-UNNAMED
+--add-exports=java.base/java.lang.reflect=ALL-UNNAMED
+--add-exports=java.base/java.util=ALL-UNNAMED
+--add-exports=java.base/java.nio=ALL-UNNAMED
+--add-exports=java.base/sun.nio.ch=ALL-UNNAMED
+
+--add-opens java.base/java.lang=ALL-UNNAMED
+--add-opens java.base/java.lang.reflect=ALL-UNNAMED
+--add-opens java.base/java.util=ALL-UNNAMED
+--add-opens java.base/java.nio=ALL-UNNAMED
+--add-opens java.base/sun.nio.ch=ALL-UNNAMED
+
+--initialize-at-run-time=sun.net.dns.ResolverConfigurationImpl
+
+-Dio.netty.tryReflectionSetAccessible=true
+
+--report-unsupported-elements-at-runtime
+--allow-incomplete-classpath
+
+--enable-url-protocols=http
+-H:EnableURLProtocols=http
+-H:EnableURLProtocols=https
+-H:+ReportExceptionStackTraces
+
+-H:IncludeResources=".*"
+
+--verbose
+--no-fallback
+-O4

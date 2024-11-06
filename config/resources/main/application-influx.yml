@@ -1,0 +1,7 @@
+spring:
+  influx:
+    host: #spring.influx.host#
+    port: #spring.influx.port#
+    token: #spring.influx.token#
+    org: #spring.application.group#
+    bucket: #spring.application.name#

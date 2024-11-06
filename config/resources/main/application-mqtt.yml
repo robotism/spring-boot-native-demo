@@ -1,0 +1,18 @@
+
+
+
+
+spring:
+  mqtt:
+    scheme: #spring.mqtt.scheme#
+    host: #spring.mqtt.host#
+    port: #spring.mqtt.port#
+    username: #spring.mqtt.username#
+    password: #spring.mqtt.password#
+    path: #spring.mqtt.path#
+  emqx:
+    scheme: #spring.emqx.scheme#
+    host: #spring.emqx.host#
+    port: #spring.emqx.port#
+    username: #spring.emqx.username#
+    password: #spring.emqx.password#

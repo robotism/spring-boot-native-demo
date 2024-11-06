@@ -1,0 +1,18 @@
+
+def lines = rootProject.file("config/base.graalvm.buildArgs.txt").readLines()
+def args = lines.stream().filter {it.trim().length()>0}.toList()
+
+if (!ext.isNativeEnable) {
+    apply plugin: "java-library" // 添加此插件会引起 graalvm 自动添加参数 --shared 打包成库
+}
+if (ext.isNativeEnable) {
+    apply plugin: "org.graalvm.buildtools.native"
+    graalvmNative {
+        toolchainDetection = true
+        binaries.all {
+            args.forEach {
+                buildArgs.add(it)
+            }
+        }
+    }
+}

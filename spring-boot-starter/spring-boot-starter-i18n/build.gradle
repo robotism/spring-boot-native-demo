@@ -1,0 +1,13 @@
+
+dependencies {
+    // servlet
+//    compileOnly "javax.servlet:javax.servlet-api"
+    compileOnly "jakarta.servlet:jakarta.servlet-api"
+
+    api auto("spring-boot-starter-common")
+
+    api "org.springframework.boot:spring-boot-starter-web"
+
+    // https://mvnrepository.com/artifact/com.ibm.icu/icu4j
+    api  "com.ibm.icu:icu4j"
+}

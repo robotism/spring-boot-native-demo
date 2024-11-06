@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.gankcode.springboot.db.config.TransactionAutoConfiguration,\
+  com.gankcode.springboot.db.config.druid.DruidUiAutoConfiguration,\
+  com.gankcode.springboot.db.config.mybatis.flex.DatasourceAutoConfiguration

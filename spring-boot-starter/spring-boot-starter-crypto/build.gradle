@@ -1,0 +1,11 @@
+//
+
+dependencies {
+    testApi auto("spring-boot-starter-test")
+
+    api auto("spring-boot-starter-common")
+
+    api 'org.springframework:spring-core'
+
+    api 'org.bouncycastle:bcprov-jdk18on'
+}

@@ -1,0 +1,15 @@
+#
+# spring:
+#   mail:
+#     protocol: smtps
+#     host: smtp.ym.163.com
+#     port: 465
+#
+
+#spring:
+#  mail:
+#    protocol: smtps
+#    host: smtp.ym.163.com
+#    port: 465
+#    username: no-reply@example.com
+#    password: xxx

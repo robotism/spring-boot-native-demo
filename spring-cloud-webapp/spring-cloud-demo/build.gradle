@@ -1,0 +1,7 @@
+dependencies {
+
+    testApi auto("spring-boot-starter-test")
+
+    api auto("spring-boot-starter-web")
+
+}

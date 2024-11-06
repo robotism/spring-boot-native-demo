@@ -1,0 +1,84 @@
+import java.util.regex.Pattern
+
+/// /////////////////////////////////////////////////////////
+///
+/// Base Spring Gradle Script
+///
+/// /////////////////////////////////////////////////////////
+
+
+if (ext.isLibrary) {
+    jar {
+        enabled = true
+    }
+}
+if (ext.isApplication) {
+    bootJar {
+        enabled = true
+    }
+}
+
+afterEvaluate {
+    // rename boot jar archive
+    if (ext.isApplication) {
+        bootJar.archiveBaseName = "${project.name}-${ext.profile}"
+    }
+
+    apply from: rootProject.file("config/base.filter.gradle")
+}
+
+if (ext.isProject) {
+    sourceSets {
+        main.java.srcDirs = [
+                'src/main/java',
+                'src/main/java-gen'
+        ]
+        main.resources.srcDirs = [
+                'src/main/resources',
+                "src/main/resources-public"
+        ]
+        test.resources.srcDirs = [
+                "${project.rootDir}/config/resources/main",
+                'src/main/resources',
+                "src/main/resources-public",
+                "${project.rootDir}/config/resources/test",
+                'src/test/resources',
+        ]
+    }
+}
+
+if (ext.isApplication) {
+    sourceSets.main.resources.srcDirs += "${project.rootDir}/config/resources/main"
+    sourceSets.main.resources.srcDirs += "src/main/resources-profile/${ext.profile}"
+    sourceSets.test.resources.srcDirs += "src/main/resources-profile/${ext.profile}"
+}
+
+
+ext {
+    auto = {
+        module ->
+
+            def deps = []
+            def tree = fileTree(dir: rootProject.projectDir, include: "**/${module}/build.gradle")
+
+            tree.each { File file ->
+                def path = file.parent.substring(rootProject.projectDir.absolutePath.length() + 1)
+                def paths = path.split(ext.isUnix ? "/" : "\\\\")
+                def dep = paths.join(":")
+                deps.add(project(":${dep}"))
+            }
+
+            //
+            //
+            //  if (isLibrary && isPackage) {
+            //      deps.clear()
+            //  }
+
+            if (deps.isEmpty()) {
+                def dep = "${group}:${module}:${version}" as Object
+                deps.add(dep)
+            }
+
+            return deps[0]
+    }
+}

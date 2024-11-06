@@ -1,0 +1,70 @@
+// rootProject.name =
+
+pluginManagement {
+    plugins {
+    }
+    resolutionStrategy {
+//        eachPlugin {
+//            if (requested.id.namespace == "com.example") {
+//                useModule("com.example:sample-plugins:1.0.0")
+//            }
+//        }
+    }
+    repositories {
+        mavenLocal()
+        maven { url = uri("https://maven.aliyun.com/repository/public") }
+        maven { url = uri("https://maven.aliyun.com/repository/jcenter") }
+        maven { url = uri("https://maven.aliyun.com/repository/google") }
+        maven { url = uri("https://maven.aliyun.com/repository/central") }
+        maven { url = uri("https://maven.aliyun.com/repository/spring") }
+        maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
+        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://plugins.gradle.org/m2") }
+        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
+        mavenCentral()
+        gradlePluginPortal()
+        google()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenLocal()
+        maven { url = uri("https://maven.aliyun.com/repository/public") }
+        maven { url = uri("https://maven.aliyun.com/repository/jcenter") }
+        maven { url = uri("https://maven.aliyun.com/repository/google") }
+        maven { url = uri("https://maven.aliyun.com/repository/central") }
+        maven { url = uri("https://maven.aliyun.com/repository/spring") }
+        maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
+        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://plugins.gradle.org/m2") }
+        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
+        mavenCentral()
+        google()
+    }
+}
+
+def root = rootProject.projectDir
+
+println("Setting Root Project : " + root.absolutePath)
+println("Gradle Start Tasks   : " + gradle.startParameter.taskNames)
+
+//
+//
+
+final List<String> projects = new ArrayList<>()
+final def tree = fileTree(dir: './', include: '**/build.gradle')
+final def isUnix = new File("").getAbsolutePath().startsWith("/")
+
+tree.each { File file ->
+    if (file.parent != root.absolutePath) {
+        def path = file.parent.substring(root.absolutePath.length() + 1)
+        def paths = path.split(isUnix ? "/" : "\\\\")
+        projects.add(":" + paths.join(":"))
+    }
+}
+
+projects.each { p ->
+    println("Found Project Name : $p")
+    include p
+}

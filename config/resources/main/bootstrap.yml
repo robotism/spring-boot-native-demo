@@ -1,0 +1,14 @@
+
+spring:
+  cloud:
+    discovery:
+      enabled: #spring.cloud.discovery.enabled#
+    nacos:
+      discovery:
+        enabled: ${spring.cloud.discovery.enabled}
+        fail-fast: true
+        server-addr: #spring.cloud.nacos.host#:#spring.cloud.nacos.port#
+        register-enabled: ${spring.cloud.discovery.enabled}
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yml

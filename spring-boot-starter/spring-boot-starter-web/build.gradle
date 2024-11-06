@@ -1,0 +1,44 @@
+//
+
+
+dependencies {
+    testApi auto("spring-boot-starter-test")
+
+    api auto("spring-boot-starter-common")
+    api auto("spring-boot-starter-crypto")
+
+    api auto("spring-boot-starter-i18n")
+
+    api auto("spring-boot-starter-db")
+    api auto("spring-boot-starter-redis")
+
+
+    api "jakarta.servlet:jakarta.servlet-api"
+
+    api 'org.springframework.boot:spring-boot-starter-web'
+
+    api 'org.springframework.boot:spring-boot-starter-undertow'
+
+    api 'org.springframework.boot:spring-boot-starter-actuator'
+    api 'org.springframework.boot:spring-boot-starter-validation'
+//    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    api 'org.springframework.boot:spring-boot-starter-aop'
+    api 'org.springframework.boot:spring-boot-starter-websocket'
+
+//    api 'org.springframework.cloud:spring-cloud-commons'
+//    api 'org.springframework.cloud:spring-cloud-context'
+    api("org.springframework.cloud:spring-cloud-starter")
+
+
+    api "com.squareup.okhttp3:okhttp"
+    api "com.squareup.okhttp3:logging-interceptor"
+
+    api 'org.apache.httpcomponents.client5:httpclient5'
+
+    // SpringDoc OpenApi with Swagger3
+    // api "org.springdoc:springdoc-openapi-ui"
+    api "org.springdoc:springdoc-openapi-starter-webmvc-ui"
+    // api "org.springdoc:springdoc-openapi-security"
+
+}

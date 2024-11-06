@@ -1,0 +1,14 @@
+
+
+
+
+spring:
+  rabbitmq:
+    host: #spring.rabbitmq.host#
+    port: #spring.rabbitmq.port#
+    username: #spring.rabbitmq.username#
+    password: #spring.rabbitmq.password#
+    virtual-host: /
+    listener:
+      direct:
+        acknowledge-mode: manual

@@ -1,0 +1,23 @@
+//
+
+
+dependencies {
+
+    api auto("spring-boot-starter-common")
+
+//    compile('org.springframework.boot:spring-boot-starter-data-redis') {
+//        exclude group: 'redis.clients', module: "jedis"
+//        exclude group: 'io.lettuce'
+//    }
+//    compile 'org.springframework.boot:spring-boot-starter-cache'
+
+//    api 'org.springframework.session:spring-session-data-redis'
+
+    // redisson
+    api("org.redisson:redisson-spring-boot-starter") {
+        exclude group: 'org.springframework.boot', module: "spring-boot-starter-actuator"
+        exclude group: 'org.springframework.boot', module: "spring-boot-starter-web"
+    }
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+}

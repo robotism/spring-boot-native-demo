@@ -1,0 +1,81 @@
+
+
+build:
+  env:
+    date: #build.env.date#
+    os: #build.env.os#
+    host: #build.env.host#
+    nonce: #build.env.nonce#
+
+application:
+  version: #spring.application.version#
+
+server:
+  shutdown: graceful
+  port: #server.port#
+  servlet:
+    context-path:
+    encoding:
+      force: true
+      enabled: true
+      charset: UTF-8
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+  http2:
+    enabled: true
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  application:
+    group: #spring.application.group#
+    name: #spring.application.name#
+    version: #spring.application.version#
+    id: ${spring.application.name}
+  jmx:
+    default-domain: ${spring.application.id}
+    enabled: false
+  output:
+    ansi:
+      enabled: detect
+  devtools:
+    restart:
+      enabled: false
+  profiles:
+    include: autoconfigure,swagger,db,redis,mq,mqtt,influx,feign,email
+    active: #spring.profiles.active#
+  main:
+    banner-mode: console
+  jackson:
+    timeZone: UTC
+    dateFormat: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+  jta:
+    enabled: false
+  servlet:
+    multipart:
+      resolveLazily: true
+      max-file-size: 4GB
+      max-request-size: 64GB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    env:
+      enabled: true
+    shutdown:
+      enabled: false
+

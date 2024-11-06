@@ -1,0 +1,227 @@
+/// /////////////////////////////////////////////////////////
+///
+/// Service Filter Gradle Script
+///
+/// /////////////////////////////////////////////////////////
+
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+final Map<String, String> gradleProperties = project.properties
+final Map<String, String> localProperties = loadLocalProperties()
+final Map<String, String> gradleSpringProperties = gradleProperties.findAll { it.key.startsWith("spring.") }
+final Map<String, String> localEnvProperties = localProperties.findAll { it.key.startsWith("env.") }
+
+
+ext {
+    isCloud = gradleProperties["discovery.enabled"] ?: false
+}
+
+// tokens from project
+def extendProperties = [
+        // profile
+        "build.env.nonce"                : new ShortId(BuildInfo.buildTime()).getShort62(),
+        "build.env.date"                 : "" + BuildInfo.buildTime(),
+        "build.env.os"                   : System.getProperty("os.name") + " " + System.getProperty("os.arch") + " " + System.getProperty("os.version"),
+        "build.env.host"                 : BuildInfo.buildHostName(),
+        "build.env.git"                  : BuildInfo.gitBranch() + ":" + BuildInfo.gitRevision(),
+
+        // profile
+        "spring.profiles.active"         : profile ?: "",
+        // application
+        "spring.application.group"       : (project.group ?: "").toString().replaceAll("[-.]+", "-"),
+        "spring.application.name"        : (project.name ?: "").toString().replaceAll("[-.]+", "-"),
+        "spring.application.version"     : project.version ?: "",
+
+        "logging.name"                   : LOGGER ?: "",
+
+        // port
+        "server.port"                    : findValueWithProfile("server.port.${project.name}") ?: '0',
+
+        // custom property for switch discovery
+        "spring.cloud.discovery.enabled" : String.valueOf(isCloud),
+        "spring.cloud.discovery.disabled": String.valueOf(!isCloud),
+
+        // project name
+        "project.name"                   : project.name.toLowerCase(),
+        "project.name.underline"         : project.name.replaceAll("-", "_").toLowerCase(),
+
+]
+
+def final tokens = new HashMap<String, String>()
+
+
+gradleSpringProperties.forEach((k, v) -> {
+    tokens.put(fixedKeyWithProfile(k), fixedValueWithPlaceHolder(localEnvProperties, v))
+})
+extendProperties.forEach((k, v) -> {
+    tokens.put(fixedKeyWithProfile(k), fixedValueWithPlaceHolder(localEnvProperties, v))
+})
+localProperties.forEach((k, v) -> {
+    tokens.put(fixedKeyWithProfile(k), fixedValueWithPlaceHolder(localEnvProperties, v))
+})
+
+
+processResources {
+    filesMatching('**/*.yml') {
+        filteringCharset 'UTF-8'
+        filter ReplaceTokens,
+                beginToken: '#',
+                endToken: '#',
+                tokens: tokens
+    }
+}
+
+processTestResources {
+    filesMatching('**/*.yml') {
+        filteringCharset 'UTF-8'
+        filter ReplaceTokens,
+                beginToken: '#',
+                endToken: '#',
+                tokens: tokens
+    }
+}
+
+def fixedValueWithPlaceHolder(Map<String, String> env, String value) {
+    def fixed = value
+    env.forEach((k, v) -> {
+        fixed = fixed.replaceAll("\\\$\\{" + k + "}", v)
+    })
+//    if(fixed != value){
+//        throw new RuntimeException("!!!"+value+"===> "+fixed)
+//    }
+    return fixed
+}
+
+def fixedKeyWithProfile(String key) {
+    final p = profile + "."
+    if (key.startsWith(p)) {
+        return key.substring(p.length())
+    }
+    return key
+}
+
+def findValueWithProfile(key) {
+    for (def o : [project, project.properties, loadLocalProperties()]) {
+        for (def k : ["${profile}.${key}", "${key}"]) {
+            try {
+                def v = o[k]
+                if (v) {
+                    return v
+                }
+            } catch (ignored) {
+            }
+        }
+    }
+}
+
+def loadLocalProperties() {
+    def final tokens = new HashMap<String, String>()
+    def localPropFile = project.rootProject.file('local.properties')
+    if (localPropFile.exists()) {
+        def properties = new Properties()
+        properties.load(localPropFile.newDataInputStream())
+        tokens.putAll(properties.findAll())
+    }
+    return tokens
+}
+
+
+final class BuildInfo {
+
+    static String gitBranch() {
+//        String s = "git rev-parse --short HEAD"
+        def cmd = "git branch"
+        def branches = cmd.execute().text.trim().split("\n")
+        for (String b : branches) {
+            if (b.trim().startsWith("*")) {
+                return b.trim().replaceAll("\\*", "").trim()
+            }
+        }
+        return ""
+    }
+
+
+    static String gitRevision() {
+//        String s = "git rev-parse --short HEAD"
+        def cmd = "git rev-parse HEAD"
+        return cmd.execute().text.trim()
+    }
+
+    static String gitUserName() {
+        def cmd = "git config user.name"
+        return cmd.execute().text.trim()
+    }
+
+
+    static String gitUserMail() {
+        def cmd = "git config user.email"
+        return cmd.execute().text.trim()
+    }
+
+    static long buildTime() {
+        return System.currentTimeMillis()
+    }
+
+    static String buildUserName() {
+        String username = System.getProperty("user.name")
+        String envUserName = System.getenv().get("USERNAME")
+        return envUserName ? envUserName : username
+    }
+
+    static String buildHostName() {
+        Map<String, String> map = System.getenv()
+        String pcName = map.get("COMPUTERNAME")
+        return pcName != null && pcName.length() > 0 ? pcName : getHostNameForLinux()
+    }
+
+    static String getHostNameForLinux() {
+        try {
+            return (InetAddress.getLocalHost()).getHostName()
+        } catch (UnknownHostException uhe) {
+            String host = uhe.getMessage() // host = "hostname: hostname"
+            if (host != null) {
+                int colon = host.indexOf(':')
+                if (colon > 0) {
+                    return host.substring(0, colon)
+                }
+            }
+            return "UnknownHost"
+        }
+    }
+
+}
+
+
+class ShortId {
+
+    private static final String SALT_52 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    private static final String SALT_62 = "0123456789" + SALT_52
+
+    final long id // 十进制无符号整数
+
+    final String short52
+    final String short62
+
+
+    ShortId(long id) {
+        this.id = id
+        this.short52 = encode(id, SALT_52)
+        this.short62 = encode(id, SALT_62)
+    }
+
+    private static String encode(long id, String salt) {
+
+        final int scale = salt.length()
+        final StringBuilder sb = new StringBuilder()
+        while (id > scale - 1) {
+            final int remainder = Long.valueOf(id % scale).intValue()
+            sb.append(salt.charAt(remainder))
+            id = (long) (id / scale)
+        }
+        sb.append(salt.charAt(Long.valueOf(id).intValue()))
+        return sb.reverse().toString()
+    }
+
+
+}
